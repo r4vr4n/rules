@@ -1,6 +1,6 @@
 # Must-Follow Rules
 
-General-purpose behavioral rules for software development, consolidated from `model-rules-extracted.md` and `RULES-DIGEST.md` without repetition.
+Non-negotiable behavioral and coding standards for software development: how to communicate, design and write minimal code, commit, review, compress docs, delegate, verify work — plus JavaScript, TypeScript, and React best practices. Sections 1–8 govern behavior; 9–10 govern code; 11 overrides everything.
 
 ---
 
@@ -159,7 +159,79 @@ Translate acceptance conditions into smallest sufficient proof set. Focused chec
 
 ---
 
-## 9. Global overrides (apply to everything above)
+## 9. JavaScript coding practices
+
+**Syntax & language**
+- `const` by default; `let` only when reassigning; never `var`
+- Strict equality `===`/`!==`; never `==`/`!=`
+- Prefer destructuring, spread/rest, optional chaining (`?.`), nullish coalescing (`??`) over verbose equivalents
+- Template literals over string concatenation
+- No magic numbers/strings — named constants
+- Non-mutating array methods on shared data: `.toSorted()`/`.toReversed()`/`.with()` instead of `.sort()`/`.reverse()`/splice
+
+**Functions & modules**
+- One job per function; pure where possible — side effects (I/O, DOM, network) pushed to the edges
+- Guard clauses + early returns over deep nesting
+- Descriptive names: camelCase variables/functions, PascalCase classes/components, SNAKE_CASE constants; verbs for function names
+- No circular imports; import directly from source files rather than barrel files when bundle size matters
+
+**Async**
+- `async/await` over `.then()` chains; every promise has a rejection path — no swallowed errors
+- Independent awaits run in parallel (`Promise.all`), never sequential
+- Timeouts/cancellation for network calls
+
+**Errors & security**
+- Fail fast; validate inputs at trust boundaries; typed/thrown errors over sentinel values
+- Never `eval`; never build HTML from unsanitized user input (XSS); secrets never in client-reachable code
+
+**Type safety — solid types, never hacky ones**
+- TypeScript strict mode when the project supports it
+- No `any`, no `as any`, no `@ts-ignore`; reach for `unknown` + narrowing when the shape is unclear
+- Never silence the compiler with assertions (`as`) or non-null (`!`) to make an error go away — fix the type or fix the code; a type error means one of them is wrong
+- Model real shapes: discriminated unions over boolean-flag soup (`{status: 'loading' | 'error' | 'success'}`); exhaustive switches with a `never` check
+- Validate external/untrusted input at boundaries with a schema (e.g. zod) and derive types from it — types can't drift from runtime reality
+- Annotate exported/public signatures precisely; let inference handle locals
+- Compose with generics and utility types (`Pick`, `Omit`, `Readonly`, `ReturnType`) instead of copy-pasting near-identical interfaces
+- No lying names: a type named `User` must match what actually arrives — partial shapes get `Partial<User>`/`Draft` naming, not reuse of the wrong type
+
+**Tooling & tests**
+- ESLint + Prettier enforced in CI, not optional
+- Tests follow arrange–act–assert; cover happy path AND failure modes
+
+---
+
+## 10. React & frontend practices
+
+**Components**
+- Single responsibility per component — split when it fetches + manages complex state + renders heavy UI at once
+- Pure during render: no mutating props/state/refs, no external writes (also required for React Compiler to optimize)
+- Colocate state as close to its usage as possible; lift only when sharing is needed
+- Derive values during render instead of storing duplicate state; one source of truth per datum
+- Stable unique keys in lists — never array index for reorderable/dynamic lists
+
+**Hooks**
+- Rules of Hooks always: top level only, exhaustive deps; keep `eslint-plugin-react-hooks` on error — never disable per-line
+- Don't memoize by habit. With React Compiler enabled, hand-written `useMemo`/`useCallback`/`memo()` is noise — memoize only measured hot paths
+- `useEffect` synchronizes with external systems ONLY — not for data fetching (use framework loaders / `use()` + Suspense), not for deriving state, not for event handling
+- Extract custom hooks for reuse ("would two components want this logic?"), not to hide length
+- Effects that subscribe/timer need cleanup; initialization belongs in lazy state init or module scope, not `useEffect([])`
+
+**State & data fetching**
+- Local-first state; global store only for genuinely cross-cutting state
+- Immutable updates: `[...prev, item]`, never `push`
+- Render loading/error/empty states explicitly; parallelize independent fetches — no request waterfalls
+
+**Architecture & UX**
+- Feature-based folders: `features/<name>/{components,hooks,types}` with an explicit public API via `index.ts`; not folders-by-type as apps grow
+- Server Components by default in RSC frameworks; Client Components only where interactivity requires; never pass secrets through client props
+- Conditional rendering with booleans/ternary — `{count && <X/>}` leaks `0` to the DOM
+- Accessibility built-in: semantic HTML first, ARIA last resort, keyboard navigable, labeled inputs, alt text
+- Performance = SEO (INP/Core Web Vitals): code-split routes, lazy-load below-fold components and heavy assets, dynamic import large dependencies
+- Modals/dialog state reflected in URL or server-rendered HTML where possible
+
+---
+
+## 11. Global overrides (apply to everything above)
 
 **Auto-Clarity — drop terse/lazy mode for:**
 - Security warnings
