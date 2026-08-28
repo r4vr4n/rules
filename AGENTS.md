@@ -374,7 +374,7 @@ function applyDiscount(cart): void {
 
 **Phase 2:** Reproduce → minimize to smallest red scenario (every element load-bearing).
 
-**Phase 3:** 3–5 **ranked, falsifiable hypotheses** before testing. Format: "If X causes it, changing Y makes it disappear." Guessing without hypotheses = random walk.
+**Phase 3:** 3-5 **ranked, falsifiable hypotheses** before testing. Format: "If X causes it, changing Y makes it disappear." Guessing without hypotheses = random walk.
 
 **Phase 4:** Instrument one variable at a time. Debugger > targeted logs > never "log everything." Tag debug logs `[DEBUG-xxxx]` for cleanup.
 
@@ -439,8 +439,8 @@ Apply the **deletion test** (section 14) to suspected shallow modules.
 
 **Body discipline:**
 
-- Under 500 lines; target 150–300. Past ~500 you almost always have 2–3 skills masquerading as one — split by lifecycle / role / level.
-- Highest-signal first: one-line bolded summary → When to Use (3–6 concrete situations) → core concept (≤5 sentences) → minimal example → deeper patterns → anti-patterns
+- Under 500 lines; target 150-300. Past ~500 you almost always have 2-3 skills masquerading as one — split by lifecycle / role / level.
+- Highest-signal first: one-line bolded summary → When to Use (3-6 concrete situations) → core concept (≤5 sentences) → minimal example → deeper patterns → anti-patterns
 - Imperative instructions ("Do X"), never "consider X"; runnable examples with zero boilerplate the reader already knows
 - Exclude: feature history, marketing prose, exhaustive edge cases (pick top 3), things the model already knows, long API-param tables (link official docs)
 - Scannability test: a 10-second skim answers what is this / when do I use it / minimal example
