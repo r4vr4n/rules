@@ -14,5 +14,7 @@ Grill:         Design tree → frontier rounds → agent finds facts, user decid
 Arch:          Scan friction signals → deletion test → deepen shallow modules
 Skills:        Solve once manually → extract; what+when in description; test triggers
 STE:           Prefer simple direct wording; one term per concept; active voice; 20-word procedures; 25-word descriptions; 3-word noun clusters; explicit articles; WARNING/CAUTION safety
+Keyboard Nav:  10-keyboard-navigation.md — tab order, focus, shortcuts, forms, React Flow
+Optimal Logic: 10-optimal-logic.md — complexity, memoization, patterns, robust vs hacky
 Verify:        Smallest sufficient proof, then STOP
 ```

@@ -1,19 +1,22 @@
-### Optimal Loops & Logic — Robust Over Hacky
+# 10. Optimal Loops & Logic — Robust Over Hacky
 
-**Algorithm Complexity:**
+**Applicable AGENTS.md Sections:** FE-STATE-001, FE-STYLE-010, FE-API-006, FE-API-009, Rule 14 (Deep Module Design)
 
-- Target O(n) or O(log n) where possible. Avoid O(n²) nested loops over large datasets.
-- Use built-in methods: `.map()`, `.filter()`, `.reduce()` over manual index-based loops when they express the intent clearly.
-- Prefer `for...of` over `for...in` for object iteration (property enumeration vs value iteration).
-- Use `Set` for uniqueness checks instead of `.indexOf()` repeated calls: `new Set(array).size` vs `array.filter((v,i) => array.indexOf(v) === i)`.
+## Algorithm Complexity
 
-**Memoization & Derived State:**
+### Target Complexity Classes
+- **Target O(n) or O(log n)** where possible. Avoid O(n²) nested loops over large datasets.
+- **Built-in methods** — Prefer `.map()`, `.filter()`, `.reduce()` over manual index-based loops when they express the intent clearly.
+- **Object iteration** — Prefer `for...of` over `for...in` for object iteration (property enumeration vs value iteration).
+- **Uniqueness checks** — Use `Set` for uniqueness checks instead of `.indexOf()` repeated calls:
+  - `new Set(array).size` vs `array.filter((v,i) => array.indexOf(v) === i)`
 
+### Memoization & Derived State
 - **`useMemo` for expensive derived computation** — Per FE-STYLE-010, measure with React DevTools before adding. Not for every variable, only hot paths.
-- **`useCallback` stability** — When passing to memoized children or for hook-dep stability. Not by habit; with React Compiler, hand-written memo is noise.
-- **Derive during render** — Instead of storing duplicate state, derive values during render (one source of truth per datum; duplicates drift per FE-12).
+- **`useCallback` stability** — When passing to memoized children or for hook-dep stability. Not by habit; with React Compiler, hand-written `useMemo`/`useCallback`/`memo()` is noise — memoize only measured hot paths.
+- **Derive during render** — Instead of storing duplicate state, derive values during render (one source of truth per datum; duplicates drift per Rule 12).
 
-**Loop Optimization Patterns:**
+## Loop Optimization Patterns
 
 | Anti-pattern | Robust alternative |
 |---|---|
@@ -22,23 +25,23 @@
 | `for...in` on arrays — iterates indices, not values | `for (const v of arr)` or `arr.map(...)` |
 | Manual DOM node collection + index tracking | `querySelectorAll` + `Array.from()` + `.map()` |
 
-**State & Fetching:**
+## State & Fetching
 
 - **Parallelize independent fetches** — No request waterfalls. Use `Promise.all` for independent async calls.
 - **TanStack Query `select` transformation** — Transform data in query factory rather than in component derived state.
 - **Prefetch on hover** — `queryClient.prefetchQuery(queryOptions())` for latency-sensitive data.
 - **Virtualized lists** — For 100+ rows, use `@tanstack/react-virtual` instead of rendering all DOM nodes.
 
-**Never premature optimize, but also don't accept the first solution:**
+## Never Premature Optimize — But Also Don't Accept the First Solution
 
-- Measure first — Use React DevTools Profiler, Chrome DevTools Performance panel.
-- Profile before optimizing — The "first solution that comes to mind" may be fine for small data volumes.
-- Cache results — If the same computation runs multiple times, consider `useMemo` or a reusable selector.
-- Avoid N+1 query patterns — Fetch all needed data in one request when possible, or use GraphQL batching.
+- **Measure first** — Use React DevTools Profiler, Chrome DevTools Performance panel.
+- **Profile before optimizing** — The "first solution that comes to mind" may be fine for small data volumes.
+- **Cache results** — If the same computation runs multiple times, consider `useMemo` or a reusable selector.
+- **Avoid N+1 query patterns** — Fetch all needed data in one request when possible, or use GraphQL batching.
 
-**Code Quality — Robust vs Hacky:**
+## Code Quality — Robust vs Hacky
 
-- **Delete test** — Apply the deletion test (Rule 14): if removing a module/complexity vanishes, it was a pass-through hack; if it fans out to N callers, it earned its keep.
+- **Deletion test (Rule 14)** — If removing a module/complexity vanishes, it was a pass-through hack; if it fans out to N callers, it earned its keep.
 - **Interface depth** — Depth is an interface property, not implementation. Hide complexity behind a smaller interface.
-- **One adapter = hypothetical seam; two = real** — Don't introduce seams unless something actually varies (Rule 14).
+- **One adapter = hypothetical seam; two = real** — Don't introduce a seam unless something actually varies (Rule 14).
 - **Type safety as defense** — No `any`, no `as any`, no `@ts-ignore`. Type errors mean the type or code is wrong; fix the one that's wrong (Rule 9).
